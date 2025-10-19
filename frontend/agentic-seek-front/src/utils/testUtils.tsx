@@ -3,6 +3,7 @@ import { render, RenderOptions } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
 import { Canvas } from '@react-three/fiber'
+import { vi } from 'vitest'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { SceneProvider } from '@/contexts/SceneContext'
 import { PerformanceProvider } from '@/contexts/PerformanceContext'
@@ -10,6 +11,11 @@ import appReducer from '@/store/slices/appSlice'
 import agentsReducer from '@/store/slices/agentsSlice'
 import neuralInterfaceReducer from '@/store/slices/neuralInterfaceSlice'
 import performanceReducer from '@/store/slices/performanceSlice'
+import { global } from 'three/webgpu'
+import { global } from 'three/webgpu'
+import { global } from 'three/webgpu'
+import { global } from 'three/webgpu'
+import { global } from 'three/webgpu'
 
 // Mock store for testing
 export const createMockStore = (initialState = {}) => {
@@ -100,7 +106,7 @@ export const ThreeTestWrapper: React.FC<ThreeTestWrapperProps> = ({
 export const mockWebGLContext = () => {
   const canvas = document.createElement('canvas')
   const context = {
-    getParameter: jest.fn((param) => {
+    getParameter: vi.fn((param) => {
       switch (param) {
         case 0x0D33: // MAX_TEXTURE_SIZE
           return 4096
@@ -110,7 +116,7 @@ export const mockWebGLContext = () => {
           return 0
       }
     }),
-    getExtension: jest.fn((name) => {
+    getExtension: vi.fn((name) => {
       switch (name) {
         case 'OES_texture_float':
           return {}
@@ -123,17 +129,17 @@ export const mockWebGLContext = () => {
       }
     }),
     // Add other WebGL methods as needed
-    createShader: jest.fn(),
-    shaderSource: jest.fn(),
-    compileShader: jest.fn(),
-    createProgram: jest.fn(),
-    attachShader: jest.fn(),
-    linkProgram: jest.fn(),
-    useProgram: jest.fn(),
+    createShader: vi.fn(),
+    shaderSource: vi.fn(),
+    compileShader: vi.fn(),
+    createProgram: vi.fn(),
+    attachShader: vi.fn(),
+    linkProgram: vi.fn(),
+    useProgram: vi.fn(),
   }
   
   // Mock canvas.getContext
-  jest.spyOn(canvas, 'getContext').mockImplementation((contextType) => {
+  vi.spyOn(canvas, 'getContext').mockImplementation((contextType) => {
     if (contextType === 'webgl' || contextType === 'webgl2') {
       return context
     }
@@ -142,7 +148,7 @@ export const mockWebGLContext = () => {
   
   // Mock document.createElement for canvas
   const originalCreateElement = document.createElement
-  jest.spyOn(document, 'createElement').mockImplementation((tagName) => {
+  vi.spyOn(document, 'createElement').mockImplementation((tagName) => {
     if (tagName === 'canvas') {
       return canvas
     }
@@ -158,7 +164,7 @@ export const mockPerformance = () => {
   
   global.performance = {
     ...originalPerformance,
-    now: jest.fn(() => Date.now()),
+    now: vi.fn(() => Date.now()),
     memory: {
       usedJSHeapSize: 50 * 1024 * 1024, // 50MB
       totalJSHeapSize: 100 * 1024 * 1024, // 100MB
@@ -176,12 +182,12 @@ export const mockAnimationFrame = () => {
   let callbacks: FrameRequestCallback[] = []
   let id = 0
   
-  global.requestAnimationFrame = jest.fn((callback: FrameRequestCallback) => {
+  global.requestAnimationFrame = vi.fn((callback: FrameRequestCallback) => {
     callbacks.push(callback)
     return ++id
   })
   
-  global.cancelAnimationFrame = jest.fn((id: number) => {
+  global.cancelAnimationFrame = vi.fn((id: number) => {
     // Simple implementation for testing
   })
   

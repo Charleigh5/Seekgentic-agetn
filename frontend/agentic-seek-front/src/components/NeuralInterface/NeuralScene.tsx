@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import type { RootState } from '@/store'
 import { Group, Vector3 } from 'three'
 import { use3DLifecycle } from '@/hooks/use3DLifecycle'
+import { AgentConstellation } from '@/components/AgentConstellation'
 
 interface NeuralSceneProps {
   onFrame?: (state: any) => void
@@ -70,52 +71,57 @@ export const NeuralScene: React.FC<NeuralSceneProps> = ({ onFrame }) => {
         material-transparent={true}
       />
       
-      {/* Central neural core */}
-      <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[0.5, 32, 32]} />
+      {/* Agent Constellation - The main feature */}
+      <AgentConstellation />
+      
+      {/* Central neural core - moved slightly back to not interfere with agents */}
+      <mesh position={[0, 0, -2]}>
+        <sphereGeometry args={[0.3, 32, 32]} />
         <meshStandardMaterial
           color={currentTheme.colors.accent}
           emissive={currentTheme.colors.accent}
           emissiveIntensity={0.2}
           metalness={0.8}
           roughness={0.2}
+          transparent={true}
+          opacity={0.7}
         />
       </mesh>
       
-      {/* Orbital rings */}
+      {/* Orbital rings - made more subtle to not compete with agents */}
       {[1, 2, 3].map((ring, index) => (
-        <group key={ring} rotation={[0, 0, (index * Math.PI) / 6]}>
+        <group key={ring} rotation={[0, 0, (index * Math.PI) / 6]} position={[0, 0, -1]}>
           <mesh position={[ring * 2, 0, 0]}>
-            <torusGeometry args={[ring * 1.5, 0.05, 8, 32]} />
+            <torusGeometry args={[ring * 1.5, 0.02, 8, 32]} />
             <meshStandardMaterial
               color={currentTheme.colors.primary}
               emissive={currentTheme.colors.primary}
-              emissiveIntensity={0.1}
+              emissiveIntensity={0.05}
               transparent={true}
-              opacity={0.6}
+              opacity={0.3}
             />
           </mesh>
         </group>
       ))}
       
-      {/* Floating particles */}
+      {/* Floating particles - reduced intensity */}
       {visualEffectsEnabled && (
-        <points>
+        <points position={[0, 0, -3]}>
           <bufferGeometry>
             <bufferAttribute
               attach="attributes-position"
-              count={100}
+              count={50}
               array={new Float32Array(
-                Array.from({ length: 300 }, () => (Math.random() - 0.5) * 20)
+                Array.from({ length: 150 }, () => (Math.random() - 0.5) * 15)
               )}
               itemSize={3}
             />
           </bufferGeometry>
           <pointsMaterial
             color={currentTheme.colors.secondary}
-            size={0.05}
+            size={0.03}
             transparent={true}
-            opacity={0.8}
+            opacity={0.4}
           />
         </points>
       )}
