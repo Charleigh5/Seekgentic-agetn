@@ -1,0 +1,67 @@
+.neural-interface {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--background-color, #0a0a0a);
+}
+
+.neural-interface canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.neural-interface-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.neural-interface-overlay > * {
+  pointer-events: auto;
+}
+
+/* Theme-specific styles */
+.neural-interface[data-theme="neural-dark"] {
+  --background-color: #0a0a0a;
+  --primary-color: #00ffff;
+  --secondary-color: #ff00ff;
+  --accent-color: #00ff88;
+  --text-color: #ffffff;
+  --surface-color: #1a1a1a;
+}
+
+.neural-interface[data-theme="neural-light"] {
+  --background-color: #f5f5f5;
+  --primary-color: #0066cc;
+  --secondary-color: #cc0066;
+  --accent-color: #00cc66;
+  --text-color: #333333;
+  --surface-color: #ffffff;
+}
+
+/* Performance optimizations */
+.neural-interface {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .neural-interface {
+    animation: none;
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .neural-interface {
+    height: 100vh;
+    height: 100dvh; /* Dynamic viewport height */
+  }
+}
