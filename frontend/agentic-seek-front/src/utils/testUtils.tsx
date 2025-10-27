@@ -12,10 +12,6 @@ import agentsReducer from '@/store/slices/agentsSlice'
 import neuralInterfaceReducer from '@/store/slices/neuralInterfaceSlice'
 import performanceReducer from '@/store/slices/performanceSlice'
 import { global } from 'three/webgpu'
-import { global } from 'three/webgpu'
-import { global } from 'three/webgpu'
-import { global } from 'three/webgpu'
-import { global } from 'three/webgpu'
 
 // Mock store for testing
 export const createMockStore = (initialState = {}) => {
@@ -160,9 +156,9 @@ export const mockWebGLContext = () => {
 
 // Performance mock
 export const mockPerformance = () => {
-  const originalPerformance = global.performance
+  const originalPerformance = window.performance
   
-  global.performance = {
+  window.performance = {
     ...originalPerformance,
     now: vi.fn(() => Date.now()),
     memory: {
@@ -182,12 +178,12 @@ export const mockAnimationFrame = () => {
   let callbacks: FrameRequestCallback[] = []
   let id = 0
   
-  global.requestAnimationFrame = vi.fn((callback: FrameRequestCallback) => {
+  window.requestAnimationFrame = vi.fn((callback: FrameRequestCallback) => {
     callbacks.push(callback)
     return ++id
   })
   
-  global.cancelAnimationFrame = vi.fn((id: number) => {
+  window.cancelAnimationFrame = vi.fn((id: number) => {
     // Simple implementation for testing
   })
   

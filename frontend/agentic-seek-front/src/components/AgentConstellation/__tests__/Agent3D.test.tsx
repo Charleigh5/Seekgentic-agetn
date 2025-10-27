@@ -11,7 +11,6 @@ vi.mock('@react-three/drei', () => ({
 }))
 
 describe('Agent3D Component Tests', () => {
-  let mockWebGL: any
   let mockFrames: any
   
   const createTestAgent = (overrides: Partial<AgentState> = {}): AgentState => ({
@@ -49,7 +48,6 @@ describe('Agent3D Component Tests', () => {
   })
   
   beforeEach(() => {
-    mockWebGL = mockWebGLContext()
     mockFrames = mockAnimationFrame()
     vi.clearAllMocks()
   })

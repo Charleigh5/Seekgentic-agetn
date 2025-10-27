@@ -34,7 +34,7 @@
     },
 
     /* Three.js and WebGL types */
-    "types": ["vite/client", "three", "@react-three/fiber"]
+    "types": ["vite/client", "three", "@react-three/fiber", "vitest/globals"]
   },
   "include": [
     "src",

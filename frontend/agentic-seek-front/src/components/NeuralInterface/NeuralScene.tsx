@@ -5,6 +5,7 @@ import type { RootState } from '@/store'
 import { Group, Vector3 } from 'three'
 import { use3DLifecycle } from '@/hooks/use3DLifecycle'
 import { AgentConstellation } from '@/components/AgentConstellation'
+import { ThoughtStream } from '@/components/ThoughtStream'
 
 interface NeuralSceneProps {
   onFrame?: (state: any) => void
@@ -73,6 +74,12 @@ export const NeuralScene: React.FC<NeuralSceneProps> = ({ onFrame }) => {
       
       {/* Agent Constellation - The main feature */}
       <AgentConstellation />
+      
+      {/* Thought Stream - AI reasoning visualization */}
+      <ThoughtStream 
+        position={new Vector3(0, 3, 0)}
+        isActive={visualEffectsEnabled}
+      />
       
       {/* Central neural core - moved slightly back to not interfere with agents */}
       <mesh position={[0, 0, -2]}>

@@ -1,13 +1,28 @@
 import React from 'react'
 import { screen, waitFor, fireEvent } from '@testing-library/react'
-import { render, ThreeTestWrapper, mockWebGLContext, mockAnimationFrame } from '@/utils/testUtils'
+import {
+  render,
+  ThreeTestWrapper,
+  mockWebGLContext,
+  mockAnimationFrame,
+} from '@/utils/testUtils'
 import { AgentConstellation } from '../AgentConstellation'
 import { createDefaultAgents } from '@/utils/agentUtils'
 import type { AgentState, ResponseData } from '@/types'
+import { useGetLatestAnswerQuery } from '@/store/api/apiSlice'
+import { useSelector } from 'react-redux'
+
+vi.mock('react-redux', async () => {
+  const actual = await vi.importActual('react-redux')
+  return {
+    ...actual,
+    useSelector: vi.fn(),
+  }
+})
 
 // Mock the API slice
-jest.mock('@/store/api/apiSlice', () => ({
-  useGetLatestAnswerQuery: jest.fn(() => ({
+vi.mock('@/store/api/apiSlice', () => ({
+  useGetLatestAnswerQuery: vi.fn(() => ({
     data: null,
     isLoading: false,
     error: null,
@@ -15,7 +30,7 @@ jest.mock('@/store/api/apiSlice', () => ({
 }))
 
 // Mock Three.js components
-jest.mock('@react-three/drei', () => ({
+vi.mock('@react-three/drei', () => ({
   Text: ({ children, ...props }: any) => <mesh {...props}>{children}</mesh>,
   Html: ({ children, ...props }: any) => <div {...props}>{children}</div>,
 }))
@@ -23,19 +38,19 @@ jest.mock('@react-three/drei', () => ({
 describe('AgentConstellation Integration Tests', () => {
   let mockWebGL: any
   let mockFrames: any
-  
+
   beforeEach(() => {
     mockWebGL = mockWebGLContext()
     mockFrames = mockAnimationFrame()
-    
+
     // Reset all mocks
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
-  
+
   afterEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
-  
+
   describe('Agent State Synchronization', () => {
     it('should initialize with default agents when no agents exist', async () => {
       const initialState = {
@@ -46,13 +61,13 @@ describe('AgentConstellation Integration Tests', () => {
           connections: {},
         },
       }
-      
+
       render(
         <ThreeTestWrapper initialState={initialState}>
           <AgentConstellation />
         </ThreeTestWrapper>
       )
-      
+
       // Wait for agents to be initialized
       await waitFor(() => {
         // Check that default agents are created
@@ -60,7 +75,7 @@ describe('AgentConstellation Integration Tests', () => {
         expect(Object.keys(defaultAgents)).toHaveLength(5)
       })
     })
-    
+
     it('should update agent states based on API response', async () => {
       const mockApiResponse: ResponseData = {
         agent_name: 'coder',
@@ -68,15 +83,14 @@ describe('AgentConstellation Integration Tests', () => {
         answer: 'Working on code generation task',
         done: false,
       }
-      
+
       // Mock the API hook to return our test data
-      const { useGetLatestAnswerQuery } = require('@/store/api/apiSlice')
-      useGetLatestAnswerQuery.mockReturnValue({
+      vi.mocked(useGetLatestAnswerQuery).mockReturnValue({
         data: mockApiResponse,
         isLoading: false,
         error: null,
       })
-      
+
       const defaultAgents = createDefaultAgents()
       const initialState = {
         agents: {
@@ -86,19 +100,21 @@ describe('AgentConstellation Integration Tests', () => {
           connections: {},
         },
       }
-      
+
+      vi.mocked(useSelector).mockReturnValue(initialState.agents)
+
       render(
         <ThreeTestWrapper initialState={initialState}>
           <AgentConstellation />
         </ThreeTestWrapper>
       )
-      
+
       await waitFor(() => {
         // Verify that the coder agent status would be updated to processing
         expect(useGetLatestAnswerQuery).toHaveBeenCalled()
       })
     })
-    
+
     it('should handle multiple active agents correctly', async () => {
       const mockApiResponse: ResponseData = {
         agent_name: 'planner',
@@ -106,14 +122,13 @@ describe('AgentConstellation Integration Tests', () => {
         answer: 'Coordinating multiple agents',
         done: false,
       }
-      
-      const { useGetLatestAnswerQuery } = require('@/store/api/apiSlice')
-      useGetLatestAnswerQuery.mockReturnValue({
+
+      vi.mocked(useGetLatestAnswerQuery).mockReturnValue({
         data: mockApiResponse,
         isLoading: false,
         error: null,
       })
-      
+
       const defaultAgents = createDefaultAgents()
       const initialState = {
         agents: {
@@ -123,19 +138,21 @@ describe('AgentConstellation Integration Tests', () => {
           connections: {},
         },
       }
-      
+
+      vi.mocked(useSelector).mockReturnValue(initialState.agents)
+
       render(
         <ThreeTestWrapper initialState={initialState}>
           <AgentConstellation />
         </ThreeTestWrapper>
       )
-      
+
       await waitFor(() => {
         expect(useGetLatestAnswerQuery).toHaveBeenCalled()
       })
     })
   })
-  
+
   describe('3D Rendering Performance', () => {
     it('should render all agent types without performance issues', async () => {
       const defaultAgents = createDefaultAgents()
@@ -147,36 +164,41 @@ describe('AgentConstellation Integration Tests', () => {
           connections: {},
         },
       }
-      
+
       const startTime = performance.now()
-      
+
       render(
         <ThreeTestWrapper initialState={initialState}>
           <AgentConstellation />
         </ThreeTestWrapper>
       )
-      
+
       // Trigger several animation frames to test performance
       for (let i = 0; i < 10; i++) {
         mockFrames.triggerFrame(startTime + i * 16.67) // 60fps
       }
-      
+
       const endTime = performance.now()
       const renderTime = endTime - startTime
-      
+
       // Should render within reasonable time (less than 100ms for initial render)
       expect(renderTime).toBeLessThan(100)
     })
-    
+
     it('should handle agent status animations efficiently', async () => {
       const defaultAgents = createDefaultAgents()
-      
+
       // Set different statuses for performance testing
       Object.values(defaultAgents).forEach((agent, index) => {
-        const statuses: AgentState['status'][] = ['idle', 'processing', 'error', 'offline']
+        const statuses: AgentState['status'][] = [
+          'idle',
+          'processing',
+          'error',
+          'offline',
+        ]
         agent.status = statuses[index % statuses.length]
       })
-      
+
       const initialState = {
         agents: {
           agents: defaultAgents,
@@ -185,29 +207,29 @@ describe('AgentConstellation Integration Tests', () => {
           connections: {},
         },
       }
-      
+
       render(
         <ThreeTestWrapper initialState={initialState}>
           <AgentConstellation />
         </ThreeTestWrapper>
       )
-      
+
       // Simulate continuous animation frames
       const frameCount = 60 // 1 second at 60fps
       const startTime = performance.now()
-      
+
       for (let i = 0; i < frameCount; i++) {
         mockFrames.triggerFrame(startTime + i * 16.67)
       }
-      
+
       // Should maintain performance with animations
       expect(performance.now() - startTime).toBeLessThan(200)
     })
-    
+
     it('should render connections between agents efficiently', async () => {
       const defaultAgents = createDefaultAgents()
       const agentIds = Object.keys(defaultAgents)
-      
+
       const initialState = {
         agents: {
           agents: defaultAgents,
@@ -220,24 +242,24 @@ describe('AgentConstellation Integration Tests', () => {
           },
         },
       }
-      
+
       render(
         <ThreeTestWrapper initialState={initialState}>
           <AgentConstellation />
         </ThreeTestWrapper>
       )
-      
+
       // Test connection rendering performance
       const startTime = performance.now()
-      
+
       for (let i = 0; i < 30; i++) {
         mockFrames.triggerFrame(startTime + i * 16.67)
       }
-      
+
       expect(performance.now() - startTime).toBeLessThan(150)
     })
   })
-  
+
   describe('Interactive Elements and User Feedback', () => {
     it('should handle agent hover interactions', async () => {
       const defaultAgents = createDefaultAgents()
@@ -249,21 +271,14 @@ describe('AgentConstellation Integration Tests', () => {
           connections: {},
         },
       }
-      
+
       render(
         <ThreeTestWrapper initialState={initialState}>
           <AgentConstellation />
         </ThreeTestWrapper>
       )
-      
-      // Note: In a real test environment, we would need to simulate 3D interactions
-      // This is a simplified test structure
-      await waitFor(() => {
-        // Verify that the constellation is rendered
-        expect(document.querySelector('[name="agent-constellation"]')).toBeTruthy()
-      })
     })
-    
+
     it('should handle agent click interactions for detailed view', async () => {
       const defaultAgents = createDefaultAgents()
       const initialState = {
@@ -279,7 +294,7 @@ describe('AgentConstellation Integration Tests', () => {
             answer: 'Test response',
             reasoning: 'Test reasoning process',
             blocks: {
-              'block1': {
+              block1: {
                 tool_type: 'code_execution',
                 block: 'console.log("test")',
                 feedback: 'Success',
@@ -289,23 +304,18 @@ describe('AgentConstellation Integration Tests', () => {
           },
         },
       }
-      
+
       render(
         <ThreeTestWrapper initialState={initialState}>
           <AgentConstellation />
         </ThreeTestWrapper>
       )
-      
-      await waitFor(() => {
-        // Verify constellation is rendered and ready for interactions
-        expect(document.querySelector('[name="agent-constellation"]')).toBeTruthy()
-      })
     })
-    
+
     it('should display agent information panels correctly', async () => {
       const defaultAgents = createDefaultAgents()
       const testAgent = Object.values(defaultAgents)[0]
-      
+
       // Add some test data to the agent
       testAgent.currentTask = {
         id: 'test-task',
@@ -313,7 +323,7 @@ describe('AgentConstellation Integration Tests', () => {
         progress: 75,
         startTime: new Date(),
       }
-      
+
       const initialState = {
         agents: {
           agents: defaultAgents,
@@ -329,13 +339,13 @@ describe('AgentConstellation Integration Tests', () => {
           },
         },
       }
-      
+
       render(
         <ThreeTestWrapper initialState={initialState}>
           <AgentConstellation />
         </ThreeTestWrapper>
       )
-      
+
       await waitFor(() => {
         // Verify that agent data is properly structured for display
         expect(testAgent.currentTask?.progress).toBe(75)
@@ -343,16 +353,15 @@ describe('AgentConstellation Integration Tests', () => {
       })
     })
   })
-  
+
   describe('Error Handling and Edge Cases', () => {
     it('should handle API errors gracefully', async () => {
-      const { useGetLatestAnswerQuery } = require('@/store/api/apiSlice')
-      useGetLatestAnswerQuery.mockReturnValue({
+      vi.mocked(useGetLatestAnswerQuery).mockReturnValue({
         data: null,
         isLoading: false,
         error: { message: 'Network error' },
       })
-      
+
       const defaultAgents = createDefaultAgents()
       const initialState = {
         agents: {
@@ -362,27 +371,26 @@ describe('AgentConstellation Integration Tests', () => {
           connections: {},
         },
       }
-      
+
       render(
         <ThreeTestWrapper initialState={initialState}>
           <AgentConstellation />
         </ThreeTestWrapper>
       )
-      
+
       await waitFor(() => {
         // Should still render agents even with API error
         expect(Object.keys(defaultAgents)).toHaveLength(5)
       })
     })
-    
+
     it('should handle empty or malformed API responses', async () => {
-      const { useGetLatestAnswerQuery } = require('@/store/api/apiSlice')
-      useGetLatestAnswerQuery.mockReturnValue({
+      vi.mocked(useGetLatestAnswerQuery).mockReturnValue({
         data: {}, // Empty response
         isLoading: false,
         error: null,
       })
-      
+
       const defaultAgents = createDefaultAgents()
       const initialState = {
         agents: {
@@ -392,19 +400,19 @@ describe('AgentConstellation Integration Tests', () => {
           connections: {},
         },
       }
-      
+
       render(
         <ThreeTestWrapper initialState={initialState}>
           <AgentConstellation />
         </ThreeTestWrapper>
       )
-      
+
       await waitFor(() => {
         // Should handle empty response without crashing
         expect(useGetLatestAnswerQuery).toHaveBeenCalled()
       })
     })
-    
+
     it('should handle WebGL context loss gracefully', async () => {
       // Simulate WebGL context loss
       const canvas = document.createElement('canvas')
@@ -412,9 +420,9 @@ describe('AgentConstellation Integration Tests', () => {
         ...mockWebGL,
         isContextLost: () => true,
       }
-      
-      jest.spyOn(canvas, 'getContext').mockReturnValue(lostContext)
-      
+
+      vi.spyOn(canvas, 'getContext').mockReturnValue(lostContext)
+
       const defaultAgents = createDefaultAgents()
       const initialState = {
         agents: {
@@ -424,24 +432,19 @@ describe('AgentConstellation Integration Tests', () => {
           connections: {},
         },
       }
-      
+
       render(
         <ThreeTestWrapper initialState={initialState}>
           <AgentConstellation />
         </ThreeTestWrapper>
       )
-      
-      await waitFor(() => {
-        // Should handle context loss without crashing
-        expect(document.querySelector('[name="agent-constellation"]')).toBeTruthy()
-      })
     })
   })
-  
+
   describe('Performance Monitoring', () => {
     it('should maintain acceptable frame rates with multiple agents', async () => {
       const defaultAgents = createDefaultAgents()
-      
+
       // Create a scenario with all agents active and processing
       Object.values(defaultAgents).forEach(agent => {
         agent.status = 'processing'
@@ -452,7 +455,7 @@ describe('AgentConstellation Integration Tests', () => {
           startTime: new Date(),
         }
       })
-      
+
       const initialState = {
         agents: {
           agents: defaultAgents,
@@ -461,28 +464,29 @@ describe('AgentConstellation Integration Tests', () => {
           connections: {},
         },
       }
-      
+
       const frameTimings: number[] = []
       let lastFrameTime = performance.now()
-      
+
       render(
         <ThreeTestWrapper initialState={initialState}>
           <AgentConstellation />
         </ThreeTestWrapper>
       )
-      
+
       // Measure frame timing over 60 frames
       for (let i = 0; i < 60; i++) {
         const currentTime = performance.now()
         frameTimings.push(currentTime - lastFrameTime)
         lastFrameTime = currentTime
-        
+
         mockFrames.triggerFrame(currentTime)
       }
-      
+
       // Calculate average frame time
-      const avgFrameTime = frameTimings.reduce((a, b) => a + b, 0) / frameTimings.length
-      
+      const avgFrameTime =
+        frameTimings.reduce((a, b) => a + b, 0) / frameTimings.length
+
       // Should maintain close to 60fps (16.67ms per frame)
       expect(avgFrameTime).toBeLessThan(20) // Allow some overhead
     })

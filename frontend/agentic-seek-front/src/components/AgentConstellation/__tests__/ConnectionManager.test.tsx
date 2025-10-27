@@ -5,7 +5,7 @@ import { createDefaultAgents } from '@/utils/agentUtils'
 import type { AgentState } from '@/types'
 
 // Mock Three.js components
-jest.mock('@react-three/drei', () => ({
+vi.mock('@react-three/drei', () => ({
   Text: ({ children, ...props }: any) => <mesh {...props}>{children}</mesh>,
 }))
 
@@ -16,11 +16,11 @@ describe('ConnectionManager Component Tests', () => {
   beforeEach(() => {
     mockWebGL = mockWebGLContext()
     mockFrames = mockAnimationFrame()
-    jest.clearAllMocks()
+    vi.clearAllMocks()
   })
   
   afterEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
   
   describe('Connection Calculation', () => {

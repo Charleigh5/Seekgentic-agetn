@@ -1,0 +1,365 @@
+/* 3D Reasoning Interface Styles */
+.panel-info-3d {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(74, 144, 226, 0.5);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  backdrop-filter: blur(10px);
+  animation: fadeInUp 0.3s ease-out;
+  pointer-events: none;
+  user-select: none;
+}
+
+.agent-badge {
+  background: linear-gradient(135deg, #4A90E2, #50E3C2);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+}
+
+/* Thought Stream Container */
+.thought-stream-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Neural Network Visualization */
+.neural-network {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.neural-node {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #4A90E2, #2171b5);
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.6);
+  animation: neuralPulse 2s infinite ease-in-out;
+}
+
+.neural-node.analysis {
+  background: radial-gradient(circle, #4A90E2, #2171b5);
+  box-shadow: 0 0 10px rgba(74, 144, 226, 0.6);
+}
+
+.neural-node.decision {
+  background: radial-gradient(circle, #F5A623, #d68910);
+  box-shadow: 0 0 10px rgba(245, 166, 35, 0.6);
+}
+
+.neural-node.action {
+  background: radial-gradient(circle, #50E3C2, #17a2b8);
+  box-shadow: 0 0 10px rgba(80, 227, 194, 0.6);
+}
+
+.neural-node.reflection {
+  background: radial-gradient(circle, #BD10E0, #8e44ad);
+  box-shadow: 0 0 10px rgba(189, 16, 224, 0.6);
+}
+
+@keyframes neuralPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+/* Neural Pathways */
+.neural-pathway {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #4A90E2, transparent);
+  opacity: 0.6;
+  animation: pathwayFlow 3s infinite linear;
+}
+
+.neural-pathway.active {
+  animation: pathwayFlowActive 1s infinite linear;
+  opacity: 1;
+}
+
+@keyframes pathwayFlow {
+  0% {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  50% {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+  100% {
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+}
+
+@keyframes pathwayFlowActive {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(74, 144, 226, 0.8);
+  }
+}
+
+/* Confidence Indicators */
+.confidence-indicator {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: confidencePulse 1.5s infinite ease-in-out;
+}
+
+.confidence-high {
+  background: #50E3C2;
+  box-shadow: 0 0 8px rgba(80, 227, 194, 0.8);
+}
+
+.confidence-medium {
+  background: #4A90E2;
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.8);
+}
+
+.confidence-low {
+  background: #F5A623;
+  box-shadow: 0 0 8px rgba(245, 166, 35, 0.8);
+}
+
+.confidence-very-low {
+  background: #D0021B;
+  box-shadow: 0 0 8px rgba(208, 2, 27, 0.8);
+}
+
+@keyframes confidencePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+}
+
+/* Particle Effects */
+.thought-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.thought-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #4A90E2;
+  border-radius: 50%;
+  animation: particleFloat 4s infinite linear;
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(100vh) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-10px) translateX(20px);
+    opacity: 0;
+  }
+}
+
+/* Reasoning Text Styles */
+.reasoning-text-3d {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  color: white;
+  text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+  animation: textGlow 2s infinite ease-in-out alternate;
+}
+
+@keyframes textGlow {
+  from {
+    text-shadow: 0 0 10px rgba(74, 144, 226, 0.5);
+  }
+  to {
+    text-shadow: 0 0 20px rgba(74, 144, 226, 0.8);
+  }
+}
+
+/* Typewriter Effect */
+.typewriter-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: #50E3C2;
+  margin-left: 2px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+/* Interactive Elements */
+.reasoning-toggle-3d {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.reasoning-toggle-3d:hover {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.reasoning-panel-3d {
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(74, 144, 226, 0.3);
+  border-radius: 12px;
+  backdrop-filter: blur(15px);
+  transition: all 0.3s ease;
+}
+
+.reasoning-panel-3d.expanded {
+  border-color: rgba(80, 227, 194, 0.6);
+  box-shadow: 0 0 20px rgba(80, 227, 194, 0.3);
+}
+
+.reasoning-panel-3d.selected {
+  border-color: rgba(74, 144, 226, 0.8);
+  box-shadow: 0 0 25px rgba(74, 144, 226, 0.4);
+  transform: scale(1.05);
+}
+
+/* Navigation Helpers */
+.navigation-indicators {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.nav-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(74, 144, 226, 0.5);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nav-indicator.active {
+  background: #50E3C2;
+  box-shadow: 0 0 10px rgba(80, 227, 194, 0.6);
+  transform: scale(1.2);
+}
+
+.nav-indicator:hover {
+  background: #4A90E2;
+  transform: scale(1.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .panel-info-3d {
+    font-size: 10px;
+    padding: 6px 8px;
+  }
+  
+  .agent-badge {
+    font-size: 9px;
+    padding: 3px 6px;
+  }
+  
+  .reasoning-text-3d {
+    font-size: 12px;
+  }
+  
+  .neural-node {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .confidence-indicator {
+    width: 4px;
+    height: 4px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .neural-node,
+  .confidence-indicator,
+  .thought-particle,
+  .typewriter-cursor {
+    animation: none;
+  }
+  
+  .neural-pathway {
+    animation: none;
+    opacity: 0.8;
+  }
+  
+  .reasoning-text-3d {
+    animation: none;
+    text-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .panel-info-3d {
+    background: rgba(0, 0, 0, 0.95);
+    border-color: #ffffff;
+  }
+  
+  .agent-badge {
+    background: #ffffff;
+    color: #000000;
+  }
+  
+  .reasoning-text-3d {
+    color: #ffffff;
+    text-shadow: none;
+  }
+}

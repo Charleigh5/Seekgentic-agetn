@@ -52,11 +52,21 @@ app.get('/latest_answer', (req, res) => {
     }
   };
 
+  const reasoningExamples = [
+    `First, I need to analyze the user's request carefully to understand the context and requirements. This involves breaking down the problem into smaller, manageable components. Then, I should consider multiple approaches to solve the problem effectively, weighing the pros and cons of each option. After thorough evaluation, I will choose the most appropriate solution based on the established criteria. Finally, I will implement the chosen approach systematically and verify the results to ensure quality.`,
+    
+    `I begin by examining the current codebase structure to identify potential areas for improvement. The analysis reveals several optimization opportunities in the data processing pipeline. Based on this assessment, I decide to refactor the core algorithms for better performance. The implementation will involve updating the existing functions while maintaining backward compatibility. Upon reflection, this approach should significantly improve system efficiency.`,
+    
+    `The user's query requires coordination between multiple system components. I start by determining which agents are best suited for different aspects of the task. The file agent can handle data retrieval, while the coder agent manages implementation details. This collaborative approach ensures comprehensive coverage of all requirements. The final solution integrates outputs from all participating agents seamlessly.`,
+    
+    `To address this complex problem, I must first gather all relevant information from available sources. The research phase reveals important constraints that will influence the solution design. I then formulate a strategic plan that accounts for these limitations while maximizing effectiveness. The execution phase involves careful monitoring and adjustment as needed. This methodical approach ensures robust and reliable results.`
+  ];
+  
   res.json({
     agent_name: currentAgent,
     status: agentStatus,
     answer: responses[Math.floor(Math.random() * responses.length)],
-    reasoning: `The ${currentAgent} agent is currently ${agentStatus} and working on task completion (${taskProgress}% done). This involves coordinating with other agents in the constellation to provide the best possible response.`,
+    reasoning: reasoningExamples[Math.floor(Math.random() * reasoningExamples.length)],
     done: taskProgress > 90,
     blocks: Math.random() > 0.5 ? blocks : undefined,
     uid: `task-${Date.now()}`
